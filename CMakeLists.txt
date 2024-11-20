@@ -16,6 +16,17 @@ add_subdirectory("lib/sfml")
 set(SFML_INCS "lib/sfml/include")
 link_directories("${CMAKE_BINARY_DIR}/lib/sfml/lib")
 
+# Maths lib
+add_library(lib_maths INTERFACE)
+target_sources(lib_maths INTERFACE "${CMAKE_SOURCE_DIR}/lib_maths/maths.h")
+target_include_directories(lib_maths INTERFACE "${CMAKE_SOURCE_DIR}/lib_maths" SYSTEM INTERFACE ${SFML_INCS})
+
+## Tile loader lib
+file(GLOB_RECURSE SOURCE_FILES lib_tile_level_loader/*.cpp lib_tile_level_loader/*.h)
+add_library(lib_tile_level_loader STATIC ${SOURCE_FILES})
+target_include_directories(lib_tile_level_loader INTERFACE "${CMAKE_SOURCE_DIR}/lib_tile_level_loader/" )
+target_link_libraries(lib_tile_level_loader lib_maths sfml-graphics)
+
 # B2D - Box2D phyics library
 # add_subdirectory("lib/b2d/Box2D")
 #include_directories("lib/b2d/Box2D/")
@@ -44,6 +55,17 @@ set_target_properties(PRACTICAL_2
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
 )
 add_dependencies(PRACTICAL_2 copy_resources)
+
+## tileset
+file(GLOB_RECURSE SOURCES tileset/*.cpp tileset/*.h)
+add_executable(tileset ${SOURCES} )
+target_include_directories(tileset SYSTEM PRIVATE ${SFML_INCS})
+target_link_libraries(tileset sfml-graphics)
+set_target_properties(tileset 
+    PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+)
+add_dependencies(tileset copy_resources)
 
 ## physics
 #file(GLOB_RECURSE SOURCES 5_physics/*.cpp 5_physics/*.h)
