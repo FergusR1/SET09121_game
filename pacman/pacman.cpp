@@ -63,7 +63,7 @@ void GameScene::load() {
 
 	for (int i = 0; i < 4; i++) {
 		auto ghost = std::make_unique<Ghost>();
-		ghost->setPosition({ 400.f,400.f });
+		//ghost->setPosition({ 400.f,400.f });
 		_ents.list.push_back(std::move(ghost));
 	}
 }

@@ -27,6 +27,11 @@ add_library(lib_tile_level_loader STATIC ${SOURCE_FILES})
 target_include_directories(lib_tile_level_loader INTERFACE "${CMAKE_SOURCE_DIR}/lib_tile_level_loader/" )
 target_link_libraries(lib_tile_level_loader lib_maths sfml-graphics)
 
+file(GLOB_RECURSE SOURCE_FILES lib_ecm/*.cpp lib_ecm/*.h)
+add_library(lib_ecm STATIC ${SOURCE_FILES})
+target_include_directories(lib_ecm INTERFACE "${CMAKE_SOURCE_DIR}/lib_ecm" )
+target_link_libraries(lib_ecm PRIVATE lib_maths)
+
 # B2D - Box2D phyics library
 # add_subdirectory("lib/b2d/Box2D")
 #include_directories("lib/b2d/Box2D/")
@@ -71,7 +76,7 @@ add_dependencies(tileset copy_resources)
 file(GLOB_RECURSE SOURCES pacman/*.cpp pacman/*.h)
 add_executable(pacman ${SOURCES} )
 target_include_directories(pacman SYSTEM PRIVATE ${SFML_INCS})
-target_link_libraries(pacman sfml-graphics)
+target_link_libraries(pacman sfml-graphics lib_ecm)
 set_target_properties(pacman 
     PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)

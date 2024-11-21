@@ -2,7 +2,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "system_renderer.h"
+#include <../pacman/system_renderer.h>
 #include <memory>
 
 class Entity {
