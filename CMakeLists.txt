@@ -67,6 +67,17 @@ set_target_properties(tileset
 )
 add_dependencies(tileset copy_resources)
 
+## pacman
+file(GLOB_RECURSE SOURCES pacman/*.cpp pacman/*.h)
+add_executable(pacman ${SOURCES} )
+target_include_directories(pacman SYSTEM PRIVATE ${SFML_INCS})
+target_link_libraries(pacman sfml-graphics)
+set_target_properties(pacman 
+    PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+)
+add_dependencies(pacman copy_resources)
+
 ## physics
 #file(GLOB_RECURSE SOURCES 5_physics/*.cpp 5_physics/*.h)
 #add_executable(5_PHYSICS ${SOURCES})
