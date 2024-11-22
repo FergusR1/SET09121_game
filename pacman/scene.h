@@ -1,5 +1,8 @@
 //scene.h
-#include "Entity.h"
+#pragma once
+//#include "Entity.h"
+#include <../lib_ecm/ecm.h>
+
 class Scene {
 public:
 	Scene() = default;

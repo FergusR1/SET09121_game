@@ -21,7 +21,6 @@ void Renderer::shutdown() {
 void Renderer::update(const double&) {}
 
 void Renderer::render() {
-    //std::cout << "system_renderer.render.start\n";
     if (rw == nullptr) {
         throw("No render window set! ");
     }
@@ -29,7 +28,6 @@ void Renderer::render() {
         rw->draw(*sprites.front());
         sprites.pop();
     }
-    //std::cout << "system_renderer.render.end\n";
 }
 
 void Renderer::queue(const sf::Drawable* s) { sprites.push(s); }

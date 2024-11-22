@@ -1,8 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "player.h"
-#include "ghost.h"
-#include "entity.h"
+#include <../lib_ecm/ecm.h>
 #include "system_renderer.h"
 #include "pacman.h"
 
@@ -88,4 +86,5 @@ int main() {
         window.display();
     }
     return 0;
+
 }

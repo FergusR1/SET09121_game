@@ -1,12 +1,16 @@
 //pacman.cpp
 #include "pacman.h"
-#include "player.h"
-#include "ghost.h"
+#include "../lib_ecm/ecm.h"
 #include <iostream>
+#include "cmp_sprite.h"
+
+#define GHOSTS_COUNT 4
 
 std::shared_ptr<Scene> gameScene = std::make_shared<GameScene>();
 std::shared_ptr<Scene> menuScene = std::make_shared<MenuScene>();
 std::shared_ptr<Scene> activeScene;
+
+
 
 
 void MenuScene::update(double dt) {
@@ -58,12 +62,32 @@ void GameScene::render() {
 }
 
 void GameScene::load() {
-	auto player = std::make_unique<Player>();
-	_ents.list.push_back(std::move(player));
 
-	for (int i = 0; i < 4; i++) {
-		auto ghost = std::make_unique<Ghost>();
-		//ghost->setPosition({ 400.f,400.f });
-		_ents.list.push_back(std::move(ghost));
+	{
+		auto pl = std::make_shared<Entity>();
+
+		auto s = pl->addComponent<ShapeComponent>();
+		s->setShape<sf::CircleShape>(12.f);
+		s->getShape().setFillColor(sf::Color::Yellow);
+		s->getShape().setOrigin(sf::Vector2f(12.f, 12.f));
+		pl->setVisible(true);
+		
+
+		_ents.list.push_back(pl);
+	}
+
+	const sf::Color ghost_cols[]{ {208, 62, 25},    // red Blinky
+								 {219, 133, 28},   // orange Clyde
+								 {70, 191, 238},   // cyan Inky
+								 {234, 130, 229} }; // pink Pinky
+
+	for (int i = 0; i < GHOSTS_COUNT; ++i) {
+		auto ghost = std::make_shared<Entity>();
+		auto s = ghost->addComponent<ShapeComponent>();
+		s->setShape<sf::CircleShape>(12.f);
+		s->getShape().setFillColor(ghost_cols[i % 4]);
+		s->getShape().setOrigin(sf::Vector2f(12.f, 12.f));
+
+		_ents.list.push_back(ghost);
 	}
 }
