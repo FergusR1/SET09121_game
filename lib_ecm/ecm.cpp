@@ -12,6 +12,12 @@ Entity::Entity() :
 
 void Entity::update(double dt) {
 	setPosition(_position);
+
+	if (_alive) {
+		for (auto c : _components) {
+			c->update(dt);
+		}
+	}
 }
 
 void Entity::render() {

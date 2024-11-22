@@ -3,15 +3,13 @@
 #include "../lib_ecm/ecm.h"
 #include <iostream>
 #include "cmp_sprite.h"
+#include "cmp_actor_movement.h"
 
 #define GHOSTS_COUNT 4
 
 std::shared_ptr<Scene> gameScene = std::make_shared<GameScene>();
 std::shared_ptr<Scene> menuScene = std::make_shared<MenuScene>();
 std::shared_ptr<Scene> activeScene;
-
-
-
 
 void MenuScene::update(double dt) {
 	
@@ -70,7 +68,7 @@ void GameScene::load() {
 		s->setShape<sf::CircleShape>(12.f);
 		s->getShape().setFillColor(sf::Color::Yellow);
 		s->getShape().setOrigin(sf::Vector2f(12.f, 12.f));
-		pl->setVisible(true);
+		pl->addComponent<PlayerMovementComponent>();
 		
 
 		_ents.list.push_back(pl);
@@ -87,6 +85,8 @@ void GameScene::load() {
 		s->setShape<sf::CircleShape>(12.f);
 		s->getShape().setFillColor(ghost_cols[i % 4]);
 		s->getShape().setOrigin(sf::Vector2f(12.f, 12.f));
+		ghost->addComponent<EnemyAIComponent>();
+		ghost->setPosition({ 200.f, 200.f });
 
 		_ents.list.push_back(ghost);
 	}
