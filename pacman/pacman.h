@@ -23,9 +23,12 @@ public:
 
 class GameScene : public Scene {
 private:
+	std::shared_ptr<Entity> player;
+	std::vector<std::shared_ptr<Entity>> ghosts;
 	sf::Text text;
 	sf::Clock scoreClock;
 	void respawn();
+	std::shared_ptr<Entity> GameScene::makeNibble(const sf::Vector2ul& nl, bool big);
 
 public:
 	GameScene() = default;

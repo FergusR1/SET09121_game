@@ -1,4 +1,5 @@
 //LevelSystem.cpp
+#include "../lib_tile_level_loader/LevelSystem.h"
 #include "LevelSystem.h"
 #include <fstream>
 
@@ -23,7 +24,9 @@ float ls::_tileSize = 0;
 unique_ptr < ls::TILE[] > ls::_tiles = nullptr;
 vector<unique_ptr<RectangleShape>> ls::_sprites;
 
-void LevelSystem::loadLevelFile(const std::string& path, float tileSize) {
+
+//void ls::loadLevelFile(const std::string& path, float tileSize) {
+void LevelSystem::loadLevelFile(const std::string & path, float tileSize) {
   _tileSize = tileSize;
   size_t w = 0, h = 0;
   string buffer;
@@ -37,6 +40,7 @@ void LevelSystem::loadLevelFile(const std::string& path, float tileSize) {
     f.read(&buffer[0], buffer.size());
     f.close();
   } else {
+    //std::cout << "Loading level file: " << path << std::endl;
     throw string("Couldn't open level file: ") + path;
   }
 
@@ -108,7 +112,7 @@ LevelSystem::TILE LevelSystem::getTile(Vector2ul p) {
   return _tiles[(p.y * _width) + p.x];
 }
 
-//LevelSystem.cpp
+
 LevelSystem::TILE LevelSystem::getTileAt(Vector2f v) {
   auto a = v - _offset;
   if (a.x < 0 || a.y < 0) {
@@ -116,6 +120,20 @@ LevelSystem::TILE LevelSystem::getTileAt(Vector2f v) {
   }
   return getTile(Vector2ul((v - _offset) / (_tileSize)));
 }
+
+std::vector<sf::Vector2ul> LevelSystem::findTiles(TILE tile) {
+    std::vector<sf::Vector2ul> foundTiles;
+    for (int i = 0; i < _width * _height; i++) {
+        if (_tiles[i] == tile) {
+            int w = i % _width;
+            int h = i / _width;  // Corrected here
+            foundTiles.push_back(sf::Vector2ul(w, h));
+        }
+    }
+    std::cout << "Found " << foundTiles.size() << " tiles of type " << tile << ".\n";
+    return foundTiles;
+}
+
 
 size_t ls::getWidth() {
     return(_width);
@@ -135,7 +153,9 @@ Color ls::getColor(TILE t) {
     return Color::Transparent;
 }
 
-
+float LevelSystem::getTileSize() {
+    return _tileSize;
+}
 
 void LevelSystem::Render(RenderWindow &window) {
   for (size_t i = 0; i < _width * _height; ++i) {

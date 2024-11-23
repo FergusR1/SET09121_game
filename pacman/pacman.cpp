@@ -4,6 +4,9 @@
 #include <iostream>
 #include "cmp_sprite.h"
 #include "cmp_actor_movement.h"
+#include "../lib_tile_level_loader/LevelSystem.h"
+#include "cmp_pickup.h"
+//#include "../lib_tile_level_loader/LevelSystem.cpp"
 
 #define GHOSTS_COUNT 4
 
@@ -44,35 +47,98 @@ void MenuScene::load() {
 	text.setPosition({100.f, 100.f});
 }
 
-void GameScene::respawn()
-{
+std::vector<std::shared_ptr<Entity>> nibbles = {};
+
+void GameScene::respawn() {
+	player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+	player->getCompatibleComponent<ActorMovementComponent>()[0]->setSpeed(150.f);
+
+	auto ghost_spawns = ls::findTiles(ls::ENEMY);
+	for (auto& g : ghosts) {
+		g->setPosition(
+			ls::getTilePosition(ghost_spawns[rand() % ghost_spawns.size()]));
+		g->getCompatibleComponent<ActorMovementComponent>()[0]->setSpeed(100.0f);
+		g->setAlive(true);
+	}
+
+	//clear any remaining nibbles
+	for (auto n : nibbles) {
+		n->setForDelete();
+		n.reset();
+	}
+	nibbles.clear();
+
+	//white nibbles
+	auto nibbleLoc = LevelSystem::findTiles(LevelSystem::EMPTY);
+	for (const auto& nl : nibbleLoc) {
+		auto cherry = makeNibble(nl, false);
+		//add to _ents and nibbles list
+		_ents.list.push_back(cherry);
+	}
+	//blue nibbles
+	nibbleLoc = LevelSystem::findTiles(LevelSystem::WAYPOINT);
+	for (const auto& nl : nibbleLoc) {
+		auto cherry = makeNibble(nl, true);
+		//add to _ents and nibbles list
+		_ents.list.push_back(cherry);
+		nibbles.push_back(cherry);
+	}
 }
 
 void GameScene::update(double dt) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
 		activeScene = menuScene;
 	}
+	//"pacman.cpp"
+	for (auto& g : ghosts) {
+		if (length(g->getPosition() - player->getPosition()) < 30.0f) {
+			respawn();
+		}
+	}
 	Scene::update(dt);
 }
 
 void GameScene::render() {
+	ls::Render(Renderer::getWindow());
 	Scene::render();
 }
 
+
+
+
+std::shared_ptr<Entity> GameScene::makeNibble(const sf::Vector2ul& nl, bool big) {
+	auto cherry = std::make_shared<Entity>();
+	auto s = cherry->addComponent<ShapeComponent>();
+	//set colour
+	if (big) {
+		s->getShape().setFillColor(sf::Color::Blue);
+	}
+	else {
+		s->getShape().setFillColor(sf::Color::White);
+	}
+
+	cherry->addComponent<PickupComponent>(big);
+	cherry->setPosition(ls::getTilePosition(nl) + sf::Vector2f(10.f, 10.f));
+	return cherry;
+}
+
+
+
 void GameScene::load() {
 
-	{
-		auto pl = std::make_shared<Entity>();
+	
+	ls::loadLevelFile("res/levels/pacman.txt", 25.0f);
+	player = std::make_shared<Entity>();
 
-		auto s = pl->addComponent<ShapeComponent>();
-		s->setShape<sf::CircleShape>(12.f);
-		s->getShape().setFillColor(sf::Color::Yellow);
-		s->getShape().setOrigin(sf::Vector2f(12.f, 12.f));
-		pl->addComponent<PlayerMovementComponent>();
+	auto s = player->addComponent<ShapeComponent>();
+	s->setShape<sf::CircleShape>(12.f);
+	s->getShape().setFillColor(sf::Color::Yellow);
+	s->getShape().setOrigin(sf::Vector2f(12.f, 12.f));
+	player->addComponent<PlayerMovementComponent>();
 		
+	_ents.list.push_back(player);
 
-		_ents.list.push_back(pl);
-	}
+	
 
 	const sf::Color ghost_cols[]{ {208, 62, 25},    // red Blinky
 								 {219, 133, 28},   // orange Clyde
@@ -81,6 +147,7 @@ void GameScene::load() {
 
 	for (int i = 0; i < GHOSTS_COUNT; ++i) {
 		auto ghost = std::make_shared<Entity>();
+		ghost->setAlive(false);
 		auto s = ghost->addComponent<ShapeComponent>();
 		s->setShape<sf::CircleShape>(12.f);
 		s->getShape().setFillColor(ghost_cols[i % 4]);
@@ -88,6 +155,11 @@ void GameScene::load() {
 		ghost->addComponent<EnemyAIComponent>();
 		ghost->setPosition({ 200.f, 200.f });
 
+		ghosts.push_back(ghost);
 		_ents.list.push_back(ghost);
 	}
+
+	respawn();
 }
+
+

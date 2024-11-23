@@ -57,7 +57,7 @@ public:
   }
 
   template <typename T>
-  const std::vector<std::shared_ptr<T>> GetCompatibleComponent() {
+  const std::vector<std::shared_ptr<T>> getCompatibleComponent() {
 	  static_assert(std::is_base_of<Component, T>::value, "T != component");
 	  std::vector<std::shared_ptr<T>> ret;
 	  for (auto c : _components) {

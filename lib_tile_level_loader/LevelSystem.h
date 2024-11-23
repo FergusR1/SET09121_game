@@ -14,7 +14,7 @@ class LevelSystem {
 public:
  enum TILE { EMPTY, START, END, WALL, ENEMY, WAYPOINT };
         
- static void loadLevelFile(const std::string&,float tileSize=100.f);
+ static void loadLevelFile(const std::string& path,float tileSize=100.f);
  static void Render(sf::RenderWindow &window);
  static sf::Color getColor(TILE t);
  static void setColor(TILE t, sf::Color c);
@@ -25,8 +25,12 @@ public:
  //get the tile at screenspace pos
  static TILE getTileAt(sf::Vector2f);
 
+ //Get all tiles of type
+ static std::vector<sf::Vector2ul> findTiles(TILE tile);
+
  static size_t getWidth();
  static size_t getHeight();
+ static float getTileSize();
  
 protected:
  static std::unique_ptr<TILE[]> _tiles; //Internal array of tiles

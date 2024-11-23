@@ -1,6 +1,8 @@
 //"cmp_actor_movement.cpp"
 #include "cmp_actor_movement.h"
-#include "../lib_tile_level_loader/LevelSystem.h"
+
+
+#define ls LevelSystem
 
 using namespace sf;
 
@@ -50,40 +52,72 @@ void PlayerMovementComponent::update(double dt) {
 }
 
 
+static const Vector2i directions[] = { {1, 0}, {0, 1}, {0, -1}, {-1, 0} };
+
 EnemyAIComponent::EnemyAIComponent(Entity* p)
     : ActorMovementComponent(p) {
-    _vecDir = { 0,0 };
 }
 
-float moveTimer = 0.f;
-
 void EnemyAIComponent::update(double dt) {
-    srand(time(nullptr));
-    //Move in four directions based on randomness
-    if (moveTimer <= 0) {
-        _vecDir = { 0,0 };
-        moveTimer = 1.f;
-        int dir = rand() % 4;
-        switch (dir) {
-        case 0:
-            _vecDir.x = 1; //Move right
-            break;
-        case 1:
-            _vecDir.x = -1; // Move left
-            break;
-        case 2:
-            _vecDir.y = 1; // Move down
-            break;
-        case 3:
-            _vecDir.y = -1; // Move up
-            break;
+
+    //amount to move
+    const auto mva = (float)(dt * _speed);
+    //Curent position
+    const Vector2f pos = _parent->getPosition();
+    //Next position
+    const Vector2f newpos = pos + _direction * mva;
+    //Inverse of our current direction
+    const Vector2i baddir = -1 * Vector2i(_direction);
+    //Random new direction
+    Vector2i newdir = directions[(rand() % 4)];
+
+    float tileSize = ls::getTileSize();
+    int tries = 10;
+
+    switch (_state) {
+    case ROAMING:
+        //std::cout << "ROAMING START\n";
+        if (ls::getTileAt(pos) == ls::WAYPOINT || ls::getTileAt(pos + _direction * tileSize ) == ls::WALL)// Wall in front or at waypoint
+        {
+            _state = ROTATING;
         }
-    }
-    else {
-        moveTimer -= dt;
-    }
+        else {
+            move(_direction * mva);
+        }
+        //std::cout << "ROAMING END\n";
+        break;
 
-    Vector2<float> moveDir = { _speed * _vecDir.x * (float)dt, _speed * _vecDir.y * (float)dt };
+    case ROTATING:
+        //std::cout << "ROTATING START\n";
+        while (
+            // Don't reverse
+            newdir == baddir
+            // and Don't pick a direction that will lead to a wall
+            || ls::getTileAt((pos + (Vector2f)newdir * tileSize)) == ls::WALL
+            ) {
+            
+            newdir = directions[(rand() % 4)]; // pick new direction
+            if (tries <= 0) {
+                newdir = baddir;
+            break; 
+            }
+            tries--;
+        }
+        _direction = Vector2f(newdir);
+        _state = ROTATED;
+        //std::cout << "ROTATING END\n";
+        break;
 
-    move(moveDir);
+    case ROTATED:
+        //std::cout << "ROTATED START\n";
+        //have we left the waypoint?
+        if (LevelSystem::getTileAt(pos) != LevelSystem::WAYPOINT) {
+            _state = ROAMING; //yes
+        }
+        move(_direction * mva); //No
+        //std::cout << "ROTATED END\n";
+        break;
+    }
+    //std::cout << "state " << _state << " newdir " << newdir <<" _direction " << _direction << " mva " << mva << std::endl;
+    ActorMovementComponent::update(dt);
 }

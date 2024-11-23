@@ -1,6 +1,7 @@
 //"cmp_actor_movement.h"
 #pragma once
 #include <ecm.h>
+#include "../lib_tile_level_loader/LevelSystem.h"
 
 class ActorMovementComponent : public Component {
 protected:
@@ -29,8 +30,10 @@ public:
 };
 
 class EnemyAIComponent : public ActorMovementComponent {
-private:
-    sf::Vector2i _vecDir;
+protected:
+    sf::Vector2f _direction;
+    enum state { ROAMING, ROTATING, ROTATED };
+    state _state = ROTATING;
 public:
     EnemyAIComponent::EnemyAIComponent(Entity* p);
     EnemyAIComponent() = delete;
