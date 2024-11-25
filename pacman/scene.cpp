@@ -12,5 +12,6 @@ void Scene::render() {
 }
 
 void Scene::update(double dt) {
+	//std::cout << "_ents.size = " << _ents.list.size() << std::endl;
 	_ents.update(dt);
 }

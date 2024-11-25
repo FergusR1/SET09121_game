@@ -9,11 +9,11 @@ using namespace std;
 using namespace sf;
 
 map<ls::TILE, Color> ls::_colours = {
-    { ls::WALL, Color::White },
+    { ls::WALL, Color::Blue },
     { ls::START, Color::Cyan },
     { ls::END, Color::Green },
-    { ls::EMPTY, Color::Black },
-    { ls::WAYPOINT, Color::Blue },
+    { ls::EMPTY, Color::Transparent },
+    { ls::WAYPOINT, Color::Transparent },
     { ls::ENEMY, Color::Red }
 };
 
@@ -106,6 +106,7 @@ Vector2f LevelSystem::getTilePosition(Vector2ul p) {
 }
 
 LevelSystem::TILE LevelSystem::getTile(Vector2ul p) {
+    std::cout << "tile pos = " << p << std::endl;
   if (p.x > _width || p.y > _height) {
     throw string("Tile out of range: ") + to_string(p.x) + "," + to_string(p.y) + ")";
   }
@@ -115,6 +116,7 @@ LevelSystem::TILE LevelSystem::getTile(Vector2ul p) {
 
 LevelSystem::TILE LevelSystem::getTileAt(Vector2f v) {
   auto a = v - _offset;
+  std::cout << "tile pos = " << v << std::endl;
   if (a.x < 0 || a.y < 0) {
     throw string("Tile out of range ");
   }

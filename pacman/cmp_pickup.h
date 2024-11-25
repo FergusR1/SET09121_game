@@ -6,8 +6,11 @@
 
 
 class PickupComponent : public Component {
+private:
+    float points;
 public:
-    PickupComponent::PickupComponent(Entity* p);
+    PickupComponent(Entity* p, bool big);
     PickupComponent() = delete;
     void update(double dt) override;
+    void render() override {};
 };

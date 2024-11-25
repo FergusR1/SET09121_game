@@ -11,6 +11,11 @@ Entity::Entity() :
 	_visible(true) {}
 
 void Entity::update(double dt) {
+
+	if (_fordeletion) {
+
+	}
+
 	setPosition(_position);
 
 	if (_alive) {
@@ -85,9 +90,20 @@ bool Component::is_fordeletion() const {
 //Component::~Component() { cout << "~component"; }
 
 void EntityManager::update(double dt) {
+	std::cout << "_ents.size = " << list.size() << std::endl;
 	for (auto entity : list) {
 		entity.get()->update(dt);
 	}
+	//std::cout << "end" << std::endl;
+	// Remove entities marked for deletion
+	list.erase(
+		std::remove_if(list.begin(), list.end(),
+			[](const std::shared_ptr<Entity>& entity) {
+				return entity->is_fordeletion();
+			}),
+		list.end());
+
+	std::cout << "end" << std::endl;
 }
 
 void EntityManager::render() {

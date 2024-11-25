@@ -8,19 +8,18 @@ using namespace sf;
 
 void ActorMovementComponent::update(double dt) {}
 
-ActorMovementComponent::ActorMovementComponent(Entity* p)
-    : _speed(100.0f), Component(p) {}
+ActorMovementComponent::ActorMovementComponent(Entity* p) : _speed(100.0f), Component(p) {}
 
-//bool ActorMovementComponent::validMove(const sf::Vector2f& pos) {
-//    return (LevelSystem::getTileAt(pos) != LevelSystem::WALL);
-//}
+bool ActorMovementComponent::validMove(const sf::Vector2f& pos) {
+    return (LevelSystem::getTileAt(pos) != LevelSystem::WALL);
+}
 
 void ActorMovementComponent::move(const sf::Vector2f& p) {
     auto pp = _parent->getPosition() + p;
-    _parent->setPosition(pp);
-    //if (validMove(pp)) {
-    //    ...
-    //}
+    
+    if (validMove(pp)) {
+        _parent->setPosition(pp);
+    }
 }
 
 void ActorMovementComponent::move(float x, float y) {
@@ -30,8 +29,7 @@ float ActorMovementComponent::getSpeed() const { return _speed; }
 void ActorMovementComponent::setSpeed(float speed) { _speed = speed; }
 
 
-PlayerMovementComponent::PlayerMovementComponent(Entity* p)
-    : ActorMovementComponent(p) {}
+PlayerMovementComponent::PlayerMovementComponent(Entity* p) : ActorMovementComponent(p) {}
 
 const Keyboard::Key controls[5] = {
     Keyboard::Right,   // Player Right

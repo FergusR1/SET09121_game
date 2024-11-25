@@ -61,6 +61,7 @@ void GameScene::respawn() {
 		g->setAlive(true);
 	}
 
+	std::cout << "PRE NIBBLES" << std::endl;
 	//clear any remaining nibbles
 	for (auto n : nibbles) {
 		n->setForDelete();
@@ -83,19 +84,25 @@ void GameScene::respawn() {
 		_ents.list.push_back(cherry);
 		nibbles.push_back(cherry);
 	}
+	std::cout << "POST NIBBLES" << std::endl;
 }
 
 void GameScene::update(double dt) {
+	std::cout << "UPDATE START" << std::endl;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
 		activeScene = menuScene;
 	}
 	//"pacman.cpp"
+	std::cout << "GHOS SIZE = " << ghosts.size() << std::endl;
 	for (auto& g : ghosts) {
+		
 		if (length(g->getPosition() - player->getPosition()) < 30.0f) {
 			respawn();
 		}
+		std::cout << "GHOST FOR" << std::endl;
 	}
 	Scene::update(dt);
+	std::cout << "UPDATE END" << std::endl;
 }
 
 void GameScene::render() {
@@ -109,11 +116,16 @@ void GameScene::render() {
 std::shared_ptr<Entity> GameScene::makeNibble(const sf::Vector2ul& nl, bool big) {
 	auto cherry = std::make_shared<Entity>();
 	auto s = cherry->addComponent<ShapeComponent>();
+	
 	//set colour
 	if (big) {
-		s->getShape().setFillColor(sf::Color::Blue);
+		s->setShape<sf::CircleShape>(6.f);
+		s->getShape().setOrigin(sf::Vector2f(6.f, 6.f));
+		s->getShape().setFillColor(sf::Color::Color(150, 170, 255, 255));
 	}
 	else {
+		s->setShape<sf::CircleShape>(3.f);
+		s->getShape().setOrigin(sf::Vector2f(3.f, 3.f));
 		s->getShape().setFillColor(sf::Color::White);
 	}
 
