@@ -35,7 +35,7 @@ void Load() {
     }
     // Set size and origin of ball
     ball.setRadius(ballRadius);
-    ball.setOrigin(ballRadius / 2.f, ballRadius / 2.f); //Should be half the ball width and height
+    ball.setOrigin(ballRadius/2.f, ballRadius/2.f); //Should be half the ball width and height
 
     // Set Initial Positions
     Reset();
@@ -133,9 +133,9 @@ void Update(RenderWindow& window) {
         //ball is above bottom edge of paddle
         by < paddles[0].getPosition().y + (paddleSize.y * 0.5)) {
 
-        // bounce off left paddle
-        ballVelocity.x *= -velocityMultiplier;
-        ballVelocity.y *= velocityMultiplier;
+            // bounce off left paddle
+            ballVelocity.x *= -velocityMultiplier;
+            ballVelocity.y *= velocityMultiplier;
     }
 }
 
