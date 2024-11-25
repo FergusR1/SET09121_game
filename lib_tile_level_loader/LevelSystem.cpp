@@ -128,7 +128,7 @@ std::vector<sf::Vector2ul> LevelSystem::findTiles(TILE tile) {
     for (int i = 0; i < _width * _height; i++) {
         if (_tiles[i] == tile) {
             int w = i % _width;
-            int h = i / _width;  // Corrected here
+            int h = i / _width;  // Corrected here 
             foundTiles.push_back(sf::Vector2ul(w, h));
         }
     }
